@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # Importing the dataset
-dataset = pd.read_csv('HR_comma_sep.csv')
+hrdata = pd.read_csv('HR_comma_sep.csv')
 
 #Making the left column as the last column for easier extraction, to be used as "y" in this particular kernel
 
@@ -25,16 +25,16 @@ col_names = ['satisfaction_level',
              'promotion_last_5years',
              'sales',
              'left']
-dataset_1 = dataset.reindex(columns = col_names)
+hrdata = hrdata.reindex(columns = col_names)
 
 ## Data Preprocessing part
 
 #Randomization
-dataset_1 = dataset_1.sample(frac = 1)
+hrdata = hrdata.sample(frac = 1)
 
 #Split into X and y, y here is 1 if the employee left, 0 otherwise
-X = dataset_1.iloc[:, 0:9].values
-y = dataset_1.iloc[:, 9].values
+X = hrdata.iloc[:, 0:9].values
+y = hrdata.iloc[:, 9].values
 
 #Encode all categorical data
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
@@ -75,8 +75,17 @@ y_pred = classifier.predict(X_test)
 y_pred = (y_pred > 0.5)
 
 from sklearn.metrics import confusion_matrix
-
+from sklearn.metrics import precision_recall_fscore_support
 cm = confusion_matrix(y_test, y_pred)
+# Accuracy, Precision and Recall 
+learning_score = precision_recall_fscore_support(y_test, y_pred)
+accuracy_cm = (cm[0, 0] + cm[1, 1])/(sum(sum(cm)))
+print('The accuracy is : ', accuracy_cm)
+print('The precision is : ', learning_score[0][1])
+print('The recall is : ', learning_score[1][1])
+print('The fscore is : ', learning_score[2][1])
+
+
 # Improving the ANN
 
 from keras.wrappers.scikit_learn import KerasClassifier
